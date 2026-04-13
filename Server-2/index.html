@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server-2 | Drexen-Ai Bot Dashboard</title>
+  <link rel="icon" type="jpg" href="https://files.catbox.moe/tmmvub.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ========== BASE STYLES ========== */
+    :root {
+      --primary: #8a2be2;
+      --primary-light: #9d4edd;
+      --primary-dark: #6a1b9a;
+      --secondary: #00e5ff;
+      --secondary-light: #18ffff;
+      --accent: #ff4081;
+      --accent-light: #ff79b0;
+      --dark: #121212;
+      --dark-light: #1e1e1e;
+      --darker: #0a0a0a;
+      --card-bg: #1a1a1a;
+      --gray: #888;
+      --light: #ffffff;
+      --danger: #ff3d3d;
+      --warning: #ffc107;
+      --success: #00e676;
+      --info: #2196f3;
+      --purple: #9c27b0;
+      
+      --font-main: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --font-heading: 'Poppins', sans-serif;
+      
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+      --shadow-xl: 0 15px 35px rgba(0, 0, 0, 0.4);
+      --shadow-primary: 0 0 20px rgba(138, 43, 226, 0.4);
+      --shadow-secondary: 0 0 15px rgba(0, 229, 255, 0.4);
+      --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-light));
+      --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+      --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-light));
+      --gradient-bg: linear-gradient(135deg, var(--darker), var(--dark));
+      --gradient-card: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+      --gradient-success: linear-gradient(135deg, var(--success), #00c853);
+      --gradient-warning: linear-gradient(135deg, var(--warning), #ff9800);
+      --gradient-danger: linear-gradient(135deg, var(--danger), #d32f2f);
+      --gradient-info: linear-gradient(135deg, var(--info), #1976d2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-main);
+      color: var(--light);
+      background: var(--gradient-bg);
+      background-attachment: fixed;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+      line-height: 1.6;
+      padding: 0;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--dark);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-light);
+    }
+    
+    /* ========== FLOATING AD ========== */
+    .floating-ad {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--gradient-card);
+      border-radius: 18px;
+      padding: 20px;
+      width: 320px;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+      z-index: 1000;
+      animation: slideInRight 0.6s ease-out;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    
+    .floating-ad.hidden {
+      transform: translateX(150%);
+      opacity: 0;
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(150%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .ad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+    }
+    
+    .ad-title {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .close-ad {
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    
+    .close-ad:hover {
+      color: var(--light);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .ad-content {
+      font-size: 0.95rem;
+      color: var(--light);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    
+    .ad-links {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .ad-link {
+      flex: 1;
+      padding: 10px 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .ad-whatsapp {
+      background: rgba(255, 0, 0, 0.15);
+      color: #ff4d4d;
+      border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+    
+    .ad-whatsapp:hover {
+      background: rgba(255, 0, 0, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    .ad-github {
+      background: rgba(138, 43, 226, 0.15);
+      color: var(--primary-light);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    .ad-github:hover {
+      background: rgba(138, 43, 226, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    /* ========== MAIN CONTAINER ========== */
+    .container { 
+      max-width: 1400px; 
+      margin: 0 auto; 
+      padding: 30px; 
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 0.3s forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* ========== HEADER ========== */
+    .header { 
+      text-align: center; 
+      margin-bottom: 50px; 
+      padding-top: 20px;
+      position: relative;
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 4px;
+      background: var(--gradient-primary);
+      border-radius: 2px;
+    }
+    
+    .header img {
+      width: 150px; 
+      height: 150px; 
+      border-radius: 50%; 
+      border: 6px solid transparent;
+      background: var(--gradient-primary) border-box;
+      box-shadow: var(--shadow-primary); 
+      margin-bottom: 25px;
+      transition: var(--transition);
+      object-fit: cover;
+    }
+    
+    .header img:hover {
+      transform: rotate(10deg) scale(1.08);
+      box-shadow: 0 0 40px rgba(138, 43, 226, 0.7);
+    }
+    
+    .header h1 {
+      font-family: var(--font-heading); 
+      font-size: 3.5rem; 
+      font-weight: 800;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; 
+      background-clip: text;
+      -webkit-text-fill-color: transparent; 
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+      text-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+    }
+    
+    .header p { 
+      color: var(--secondary); 
+      font-size: 1.3rem; 
+      font-weight: 500;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 15px 25px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      border-left: 4px solid var(--secondary);
+    }
+    
+    /* ========== BACK BUTTON ========== */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: var(--gradient-primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      z-index: 10;
+    }
+    
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-primary);
+    }
+    
+    /* ========== DASHBOARD GRID ========== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+    
+    /* ========== STATUS SECTION ========== */
+    .status-section {
+      background: var(--gradient-card); 
+      border-radius: 20px; 
+      padding: 35px; 
+      box-shadow: var(--shadow); 
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: fadeInUp 0.8s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .status-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: var(--gradient-primary);
+    }
+    
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .status-section:hover {
+      transform: translateY(-5px); 
+      box-shadow: var(--shadow-xl); 
+      border-color: rgba(138, 43, 226, 0.3);
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 25px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .section-title i {
+      background: rgba(138, 43, 226, 0.15);
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    
+    /* ========== STATUS GRID ========== */
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 25px;
+    }
+    
+    .status-card {
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+      background: var(--gradient-card);
+      border-radius: 18px;
+      animation: fadeIn 0.5s ease-out;
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .status-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+    }
+    
+    .status-card:nth-child(1)::before {
+      background: var(--gradient-primary);
+    }
+    
+    .status-card:nth-child(2)::before {
+      background: var(--gradient-success);
+    }
+    
+    .status-card:nth-child(3)::before {
+      background: var(--gradient-info);
+    }
+    
+    .status-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(138, 43, 226, 0.3);
+    }
+    
+    .status-info {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+    
+    .status-label {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+    
+    .status-label i {
+      font-size: 1.2rem;
+      width: 35px;
+      height: 35px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(138, 43, 226, 0.1);
+      color: var(--primary);
+    }
+    
+    .status-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--light);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      margin-bottom: 15px;
+    }
+    
+    .status-badge {
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      width: fit-content;
+      align-self: flex-start;
+    }
+    
+    .status-online { 
+      background: rgba(0, 230, 118, 0.15); 
+      color: var(--success);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
+      animation: pulse 2s infinite;
+    }
+    
+    .status-offline { 
+      background: rgba(255, 61, 61, 0.15); 
+      color: var(--danger);
+      border: 1px solid rgba(255, 61, 61, 0.3);
+    }
+    
+    .status-error { 
+      background: rgba(255, 61, 61, 0.15); 
+      color: var(--danger);
+      border: 1px solid rgba(255, 61, 61, 0.3);
+    }
+    
+    .status-warning { 
+      background: rgba(255, 193, 7, 0.15); 
+      color: var(--warning);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    .status-live { 
+      background: rgba(33, 150, 243, 0.15); 
+      color: var(--info);
+      border: 1px solid rgba(33, 150, 243, 0.3);
+      box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+    }
+    
+    .status-synced { 
+      background: rgba(138, 43, 226, 0.15); 
+      color: var(--primary);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+    }
+    
+    /* ========== UPTIME CONTAINER ========== */
+    .uptime-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
+      margin-top: 20px;
+      border-left: 4px solid var(--secondary);
+      transition: var(--transition);
+    }
+    
+    .uptime-container:hover {
+      background: rgba(0, 0, 0, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    .uptime-label {
+      font-size: 1rem;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+    
+    .uptime-label i {
+      font-size: 1.3rem;
+      color: var(--secondary);
+    }
+    
+    .uptime-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--secondary);
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    }
+    
+    /* ========== SERVER SECTION ========== */
+    .server-section {
+      background: var(--gradient-card); 
+      border-radius: 20px; 
+      padding: 35px; 
+      box-shadow: var(--shadow); 
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: fadeInUp 0.8s ease-out 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .server-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: var(--gradient-secondary);
+    }
+    
+    .server-section:hover {
+      transform: translateY(-5px); 
+      box-shadow: var(--shadow-xl); 
+      border-color: rgba(0, 229, 255, 0.3);
+    }
+    
+    /* ========== SERVER GRID ========== */
+    .server-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    
+    .server-card {
+      display: flex;
+      flex-direction: column;
+      padding: 25px;
+      background: var(--gradient-card);
+      border-radius: 18px;
+      animation: fadeIn 0.5s ease-out;
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .server-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(138, 43, 226, 0.3);
+    }
+    
+    .server-card:nth-child(1) {
+      border-left: 4px solid var(--warning);
+    }
+    
+    .server-card:nth-child(2) {
+      border-left: 4px solid var(--info);
+    }
+    
+    .server-card:nth-child(3) {
+      border-left: 4px solid var(--accent);
+    }
+    
+    .progress-container {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      margin-top: 15px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent
+      );
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    .memory-progress {
+      background: linear-gradient(90deg, var(--info), #2196f3);
+    }
+    
+    .storage-progress {
+      background: linear-gradient(90deg, var(--accent), #ff4081);
+    }
+    
+    .cpu-progress {
+      background: linear-gradient(90deg, var(--warning), #ffc107);
+    }
+    
+    /* ========== PAIR SECTION ========== */
+    .pair-section {
+      background: var(--gradient-card); 
+      border-radius: 20px; 
+      padding: 40px; 
+      margin: 40px 0; 
+      box-shadow: var(--shadow); 
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: fadeInUp 1s ease-out 0.4s;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    
+    .pair-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: var(--gradient-accent);
+    }
+    
+    .pair-section h2 { 
+      text-align: center; 
+      margin-bottom: 20px; 
+      font-size: 2rem; 
+      color: var(--primary); 
+      font-family: var(--font-heading);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .pair-section h2 i {
+      background: rgba(138, 43, 226, 0.15);
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+    
+    .pair-section p {
+      text-align: center; 
+      color: var(--gray); 
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.8;
+    }
+    
+    .input-container {
+      display: flex; 
+      background: rgba(0, 0, 0, 0.3); 
+      border-radius: 15px; 
+      padding: 5px; 
+      gap: 5px; 
+      width: 100%; 
+      max-width: 600px;
+      margin: 30px auto;
+      transition: var(--transition);
+      border: 1px solid rgba(138, 43, 226, 0.2);
+      box-shadow: var(--shadow);
+    }
+    
+    .input-container:focus-within {
+      box-shadow: var(--shadow-primary);
+      border-color: var(--primary);
+      transform: translateY(-5px);
+    }
+    
+    .input-container input {
+      flex: 1; 
+      border: none; 
+      border-radius: 12px; 
+      padding: 18px 25px; 
+      font-size: 1.1rem; 
+      outline: none; 
+      background: rgba(255, 255, 255, 0.95); 
+      color: var(--dark); 
+      font-weight: 600;
+      font-family: var(--font-main);
+    }
+    
+    .input-container input::placeholder {
+      color: var(--gray);
+      font-weight: 500;
+    }
+    
+    .input-container button {
+      background: var(--gradient-primary); 
+      border: none; 
+      padding: 18px 35px; 
+      border-radius: 12px; 
+      color: white; 
+      font-weight: 700; 
+      font-size: 1.1rem;
+      cursor: pointer; 
+      transition: var(--transition);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+    
+    .input-container button:hover { 
+      transform: scale(1.05); 
+      box-shadow: var(--shadow-primary); 
+    }
+    
+    .input-container button:active {
+      transform: scale(0.98);
+    }
+    
+    #waiting-message { 
+      margin-top: 20px; 
+      font-size: 1.1rem; 
+      color: var(--warning); 
+      text-align: center; 
+      display: none;
+      padding: 15px;
+      background: rgba(255, 193, 7, 0.1);
+      border-radius: 10px;
+      border-left: 4px solid var(--warning);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 500;
+    }
+    
+    #pair-result {
+      margin-top: 25px; 
+      font-size: 1.2rem; 
+      color: var(--light); 
+      font-weight: 600; 
+      text-align: center; 
+      min-height: 80px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    #copy-btn { 
+      display: none; 
+      margin: 25px auto; 
+      background: var(--gradient-primary); 
+      padding: 16px 35px; 
+      border-radius: 12px; 
+      color: white; 
+      font-weight: 700; 
+      border: none; 
+      cursor: pointer; 
+      transition: var(--transition); 
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    #copy-btn:hover { 
+      transform: translateY(-5px) scale(1.05); 
+      box-shadow: var(--shadow-primary); 
+    }
+    
+    #copy-btn.copied {
+      background: var(--gradient-success);
+    }
+    
+    /* ========== FOOTER ========== */
+    .footer { 
+      text-align: center; 
+      margin-top: 70px; 
+      color: var(--gray); 
+      font-size: 0.95rem; 
+      padding: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      animation: fadeIn 1.5s ease-out;
+    }
+    
+    .footer p {
+      margin-bottom: 10px;
+    }
+    
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    
+    .footer a:hover {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+    
+    .system-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 700;
+      margin: 0 10px;
+    }
+    
+    .system-status.operational {
+      background: rgba(0, 230, 118, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+    }
+    
+    .system-status.offline {
+      background: rgba(255, 61, 61, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(255, 61, 61, 0.3);
+    }
+    
+    .system-status.error {
+      background: rgba(255, 61, 61, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(255, 61, 61, 0.3);
+    }
+    
+    /* ========== REFRESH BUTTON ========== */
+    .refresh-btn {
+      background: var(--gradient-primary);
+      border: none;
+      padding: 16px 30px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 25px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+    
+    .refresh-btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: var(--shadow-primary);
+    }
+    
+    /* ========== LOADING ========== */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--gray);
+      grid-column: 1 / -1;
+    }
+    
+    .loading i {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+    
+    /* ========== BACKGROUND ANIMATION ========== */
+    .bg-animation {
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      z-index: -1;
+      background: radial-gradient(circle at 20% 50%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 80%, rgba(255, 64, 129, 0.1) 0%, transparent 50%);
+      background-color: var(--darker);
+    }
+    
+    /* ========== STATS BADGES ========== */
+    .stats-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      margin-top: 15px;
+      align-self: flex-start;
+    }
+    
+    .stats-badge.normal {
+      background: rgba(138, 43, 226, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    .stats-badge.high {
+      background: rgba(255, 61, 61, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(255, 61, 61, 0.3);
+    }
+    
+    .stats-badge.warning {
+      background: rgba(255, 193, 7, 0.15);
+      color: var(--warning);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    /* ========== RESPONSIVE DESIGN ========== */
+    @media (max-width: 1200px) {
+      .container {
+        padding: 25px;
+      }
+    }
+    
+    @media (max-width: 992px) {
+      .header h1 {
+        font-size: 3rem;
+      }
+      
+      .header p {
+        font-size: 1.1rem;
+      }
+      
+      .floating-ad {
+        width: calc(100% - 40px);
+        right: 20px;
+        bottom: 20px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .header p {
+        font-size: 1rem;
+      }
+      
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .server-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .input-container {
+        flex-direction: column;
+        padding: 15px;
+      }
+      
+      .input-container input,
+      .input-container button {
+        width: 100%;
+        border-radius: 10px;
+      }
+      
+      .back-btn {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-bottom: 20px;
+        display: inline-flex;
+      }
+      
+      .pair-section {
+        padding: 25px 20px;
+      }
+      
+      .pair-section h2 {
+        font-size: 1.6rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .header img {
+        width: 120px;
+        height: 120px;
+      }
+      
+      .status-value {
+        font-size: 2rem;
+      }
+      
+      .uptime-value {
+        font-size: 1.5rem;
+      }
+      
+      .pair-section h2 {
+        font-size: 1.4rem;
+      }
+      
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+  
+  <!-- Back Button -->
+  <a href="/" class="back-btn">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+  
+  <!-- Floating Ad -->
+  <div class="floating-ad" id="floatingAd">
+    <div class="ad-header">
+      <div class="ad-title">
+        <i class="fas fa-heart"></i> Support Hans Tech
+      </div>
+      <button class="close-ad" id="closeAd">&times;</button>
+    </div>
+    <div class="ad-content">
+      Don't forget to subscribe to our whatsapp channel and follow us on GitHub for updates and new features!
+    </div>
+    <div class="ad-links">
+      <a href="https://whatsapp.com/channel/0029VbBFf4nEgGfS6bViYQ1O" target="_blank" class="ad-link ad-whatsapp">
+        <i class="fab fa-whatsapp"></i> whatsapp
+      </a>
+      <a href="https://github.com/abdallahsalimjuma" target="_blank" class="ad-link ad-github">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <img src="https://files.catbox.moe/tmmvub.jpg" alt="Drexen-Ai Logo">
+      <h1>Server-2</h1>
+      <p>🤖 Drexen-Ai Bot Server | Real-time Monitoring & Pairing</p>
+    </div>
+    
+    <div class="dashboard-grid">
+      <div class="status-section">
+        <h2 class="section-title"><i class="fas fa-signal"></i> BOT STATUS</h2>
+        
+        <div class="status-grid">
+          <div class="status-card">
+            <div class="status-info">
+              <div class="status-label"><i class="fas fa-network-wired"></i> CONNECTION STATUS</div>
+              <div class="status-value" id="bot-status">Checking...</div>
+            </div>
+            <div class="status-badge status-online" id="status-badge">ONLINE</div>
+          </div>
+          
+          <div class="status-card">
+            <div class="status-info">
+              <div class="status-label"><i class="fas fa-users"></i> ACTIVE SESSIONS</div>
+              <div class="status-value" id="session-count">0</div>
+            </div>
+            <div class="status-badge status-live">LIVE</div>
+          </div>
+          
+          <div class="status-card">
+            <div class="status-info">
+              <div class="status-label"><i class="fas fa-clock"></i> LAST UPDATED</div>
+              <div class="status-value" id="last-update">--:--:--</div>
+            </div>
+            <div class="status-badge status-synced">SYNCED</div>
+          </div>
+        </div>
+        
+        <div class="uptime-container">
+          <div class="uptime-label"><i class="fas fa-hourglass-half"></i> SERVER UPTIME:</div>
+          <div class="uptime-value" id="server-uptime">00:00:00</div>
+        </div>
+      </div>
+      
+      <div class="server-section">
+        <h2 class="section-title"><i class="fas fa-server"></i> SERVER INFORMATION</h2>
+        
+        <div class="server-grid">
+          <div class="server-card">
+            <div class="status-info">
+              <div class="status-label"><i class="fas fa-microchip"></i> CPU USAGE</div>
+              <div class="status-value" id="cpu-usage">--%</div>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar cpu-progress" id="cpu-progress" style="width: 0%"></div>
+            </div>
+            <div class="stats-badge normal" id="cpu-badge">NORMAL</div>
+          </div>
+          
+          <div class="server-card">
+            <div class="status-info">
+              <div class="status-label"><i class="fas fa-memory"></i> MEMORY USAGE</div>
+              <div class="status-value" id="memory-usage">--%</div>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar memory-progress" id="memory-progress" style="width: 0%"></div>
+            </div>
+            <div class="stats-badge normal" id="memory-badge">NORMAL</div>
+          </div>
+          
+          <div class="server-card">
+            <div class="status-info">
+              <div class="status-label"><i class="fas fa-hdd"></i> STORAGE USAGE</div>
+              <div class="status-value" id="storage-usage">--%</div>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar storage-progress" id="storage-progress" style="width: 0%"></div>
+            </div>
+            <div class="stats-badge normal" id="storage-badge">NORMAL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="pair-section">
+      <h2><i class="fas fa-qrcode"></i> BOT PAIRING</h2>
+      <p>
+        Enter your WhatsApp number with country code (without +) to generate pairing code. 
+        The code will be valid for 5 minutes.
+      </p>
+      
+      <div class="input-container">
+        <input placeholder="255697xxxxxx" type="number" id="number">
+        <button id="submit">
+          <i class="fas fa-key"></i> Generate Code
+        </button>
+      </div>
+      
+      <div id="waiting-message">
+        <i class="fas fa-spinner fa-spin"></i> Please wait while we generate your pairing code...
+      </div>
+      <div id="pair-result"></div>
+      <button id="copy-btn">
+        <i class="fas fa-copy"></i> Copy Code
+      </button>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="refresh-btn" id="refresh-btn">
+        <i class="fas fa-sync-alt"></i> Refresh Status
+      </button>
+    </div>
+    
+    <div class="footer">
+      <p>© 2025 Drexen-Ai • Made with <i class="fas fa-heart" style="color: var(--accent);"></i> By <a href="https://github.com/abdallahsalimjumatz" target="_blank">Hans Tech</a></p>
+      <p>
+        System status: <span class="system-status" id="system-status">Checking...</span> | 
+        Last refresh: <span id="last-refresh">--:--:--</span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Floating Ad Functionality
+    const floatingAd = document.getElementById('floatingAd');
+    const closeAd = document.getElementById('closeAd');
+    
+    // Close floating ad
+    closeAd.addEventListener('click', () => {
+      floatingAd.classList.add('hidden');
+    });
+    
+    // Reopen floating ad after some time if closed
+    document.addEventListener('click', (e) => {
+      // If user clicks on the pairing section or buttons, show ad again after delay
+      if (e.target.closest('.pair-section') || e.target.id === 'submit' || e.target.id === 'copy-btn') {
+        setTimeout(() => {
+          if (floatingAd.classList.contains('hidden')) {
+            floatingAd.classList.remove('hidden');
+          }
+        }, 30000); // Show after 30 seconds
+      }
+    });
+
+    // DOM elements
+    const pairResult = document.getElementById("pair-result");
+    const submitButton = document.getElementById("submit");
+    const numberInput = document.getElementById("number");
+    const copyBtn = document.getElementById("copy-btn");
+    const waitingMessage = document.getElementById("waiting-message");
+    const botStatus = document.getElementById("bot-status");
+    const statusBadge = document.getElementById("status-badge");
+    const sessionCount = document.getElementById("session-count");
+    const lastUpdate = document.getElementById("last-update");
+    const lastRefresh = document.getElementById("last-refresh");
+    const systemStatus = document.getElementById("system-status");
+    const serverUptime = document.getElementById("server-uptime");
+    const refreshBtn = document.getElementById("refresh-btn");
+    
+    // Server stats elements
+    const cpuUsage = document.getElementById("cpu-usage");
+    const cpuProgress = document.getElementById("cpu-progress");
+    const cpuBadge = document.getElementById("cpu-badge");
+    const memoryUsage = document.getElementById("memory-usage");
+    const memoryProgress = document.getElementById("memory-progress");
+    const memoryBadge = document.getElementById("memory-badge");
+    const storageUsage = document.getElementById("storage-usage");
+    const storageProgress = document.getElementById("storage-progress");
+    const storageBadge = document.getElementById("storage-badge");
+    
+    // Base URL for API calls
+    const BASE_URL = 'https://drexen-ai-server-2-ecd3adf3c94e.herokuapp.com';
+    
+    // Uptime tracking
+    let startTime = Date.now();
+    
+    // Update uptime display
+    function updateUptime() {
+      const currentTime = Date.now();
+      const uptimeMs = currentTime - startTime;
+      
+      // Convert to hours, minutes, seconds
+      const seconds = Math.floor((uptimeMs / 1000) % 60);
+      const minutes = Math.floor((uptimeMs / (1000 * 60)) % 60);
+      const hours = Math.floor((uptimeMs / (1000 * 60 * 60)) % 24);
+      const days = Math.floor(uptimeMs / (1000 * 60 * 60 * 24));
+      
+      let uptimeStr = '';
+      if (days > 0) {
+        uptimeStr += `${days}d `;
+      }
+      uptimeStr += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      serverUptime.textContent = uptimeStr;
+    }
+    
+    // Update status information
+    async function updateStatus() {
+      try {
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+        
+        const response = await fetch(`${BASE_URL}/code/ping`);
+        const data = await response.json();
+        
+        botStatus.textContent = data.status || 'Unknown';
+        statusBadge.textContent = data.status === 'active' ? 'ONLINE' : 'OFFLINE';
+        statusBadge.className = `status-badge ${data.status === 'active' ? 'status-online' : 'status-offline'}`;
+        sessionCount.textContent = data.activesession || 0;
+        lastUpdate.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        
+        // Update system status
+        systemStatus.textContent = data.status === 'active' ? 'Operational' : 'Offline';
+        systemStatus.className = `system-status ${data.status === 'active' ? 'operational' : 'offline'}`;
+        
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Status';
+        
+      } catch (error) {
+        console.error('Error fetching status:', error);
+        botStatus.textContent = 'Error';
+        statusBadge.textContent = 'ERROR';
+        statusBadge.className = 'status-badge status-error';
+        systemStatus.textContent = 'Connection Error';
+        systemStatus.className = 'system-status error';
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Status';
+      }
+    }
+    
+    // Update server stats
+    async function updateServerStats() {
+      try {
+        // Simulate CPU usage (25-75%)
+        const simulatedCpu = Math.floor(Math.random() * 50) + 25;
+        cpuUsage.textContent = `${simulatedCpu}%`;
+        cpuProgress.style.width = `${simulatedCpu}%`;
+        
+        // Update badge based on usage
+        if (simulatedCpu > 70) {
+          cpuBadge.textContent = 'HIGH';
+          cpuBadge.className = 'stats-badge high';
+        } else if (simulatedCpu > 50) {
+          cpuBadge.textContent = 'WARNING';
+          cpuBadge.className = 'stats-badge warning';
+        } else {
+          cpuBadge.textContent = 'NORMAL';
+          cpuBadge.className = 'stats-badge normal';
+        }
+        
+        // Simulate memory usage (35-85%)
+        const simulatedMemory = Math.floor(Math.random() * 50) + 35;
+        memoryUsage.textContent = `${simulatedMemory}%`;
+        memoryProgress.style.width = `${simulatedMemory}%`;
+        
+        // Update badge based on usage
+        if (simulatedMemory > 80) {
+          memoryBadge.textContent = 'HIGH';
+          memoryBadge.className = 'stats-badge high';
+        } else if (simulatedMemory > 65) {
+          memoryBadge.textContent = 'WARNING';
+          memoryBadge.className = 'stats-badge warning';
+        } else {
+          memoryBadge.textContent = 'NORMAL';
+          memoryBadge.className = 'stats-badge normal';
+        }
+        
+        // Simulate storage usage (15-75%)
+        const simulatedStorage = Math.floor(Math.random() * 60) + 15;
+        storageUsage.textContent = `${simulatedStorage}%`;
+        storageProgress.style.width = `${simulatedStorage}%`;
+        
+        // Update badge based on usage
+        if (simulatedStorage > 70) {
+          storageBadge.textContent = 'HIGH';
+          storageBadge.className = 'stats-badge high';
+        } else if (simulatedStorage > 55) {
+          storageBadge.textContent = 'WARNING';
+          storageBadge.className = 'stats-badge warning';
+        } else {
+          storageBadge.textContent = 'NORMAL';
+          storageBadge.className = 'stats-badge normal';
+        }
+        
+      } catch (error) {
+        console.error('Error updating server stats:', error);
+      }
+    }
+    
+    // Handle submit button click
+    submitButton.addEventListener("click", async (e) => {
+      e.preventDefault();
+      
+      if (!numberInput.value) {
+        pairResult.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--danger);">
+            <i class="fas fa-exclamation-circle"></i>
+            <span style="font-weight: bold;">Please enter your WhatsApp number with country code.</span>
+          </div>
+        `;
+        return;
+      }
+      
+      // Validate number
+      const cleanNumber = numberInput.value.replace(/[^0-9]/g, "");
+      if (cleanNumber.length < 11) {
+        pairResult.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--danger);">
+            <i class="fas fa-times-circle"></i>
+            <span style="font-weight: bold;">Invalid number format. Please check and try again.</span>
+          </div>
+        `;
+        return;
+      }
+      
+      // Format number for display
+      let formattedNumber = "";
+      for (let i = 0; i < cleanNumber.length; i++) {
+        if (i === 3 || i === 6) {
+          formattedNumber += " " + cleanNumber[i];
+        } else {
+          formattedNumber += cleanNumber[i];
+        }
+      }
+      
+      numberInput.type = "text";
+      numberInput.value = "+" + formattedNumber;
+      numberInput.style = "color: var(--dark); font-size: 18px; font-weight: 700;";
+      
+      // Show waiting message
+      waitingMessage.style.display = "block";
+      pairResult.innerHTML = "";
+      copyBtn.style.display = "none";
+      
+      try {
+        // Make API request to generate code
+        const response = await fetch(`${BASE_URL}/code?number=${cleanNumber}`);
+        
+        let data;
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          data = await response.json();
+        } else {
+          // Not JSON, treat as error
+          throw new Error("Invalid response format");
+        }
+        
+        // Hide waiting message
+        waitingMessage.style.display = "none";
+        
+        if (data.code) {
+          // Display the code
+          pairResult.innerHTML = `
+            <div style="background: rgba(138, 43, 226, 0.1); padding: 25px; border-radius: 15px; border-left: 5px solid var(--primary);">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+                <i class="fas fa-check-circle" style="color: var(--success); font-size: 2rem;"></i>
+                <div>
+                  <div style="color: var(--primary); font-weight: 700; font-size: 1.1rem;">PAIRING CODE GENERATED!</div>
+                  <div style="color: var(--gray); font-size: 0.9rem;">Valid for 5 minutes</div>
+                </div>
+              </div>
+              <div id="copy-element" style="cursor: pointer; margin-top: 20px;">
+                <div style="font-size: 0.95rem; color: var(--gray); margin-bottom: 10px;">Your pairing code:</div>
+                <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 12px; font-size: 2rem; font-weight: 800; color: var(--light); letter-spacing: 5px; text-align: center; font-family: monospace;" id="code-text">${data.code}</div>
+              </div>
+              <div style="color: var(--gray); font-size: 0.9rem; margin-top: 20px;">
+                <i class="fas fa-info-circle"></i> Use this code to pair your WhatsApp account with the bot
+              </div>
+            </div>
+          `;
+          copyBtn.style.display = 'flex';
+        } else if (data.error) {
+          pairResult.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--danger);">
+              <i class="fas fa-times-circle"></i>
+              <span style="font-weight: bold;">Error: ${data.error}</span>
+            </div>
+          `;
+        } else if (data.status === 'already_connected') {
+          pairResult.innerHTML = `
+            <div style="background: rgba(255, 193, 7, 0.1); padding: 25px; border-radius: 15px; border-left: 5px solid var(--warning);">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <i class="fas fa-exclamation-triangle" style="color: var(--warning); font-size: 2rem;"></i>
+                <div>
+                  <div style="color: var(--warning); font-weight: 700; font-size: 1.1rem;">ALREADY CONNECTED</div>
+                  <div style="color: var(--gray); font-size: 0.9rem;">This number is already paired with the bot</div>
+                </div>
+              </div>
+              <div style="color: var(--gray); margin-top: 15px;">
+                No need to generate a new code. Your device should already have access.
+              </div>
+            </div>
+          `;
+        } else {
+          pairResult.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--danger);">
+              <i class="fas fa-exclamation-circle"></i>
+              <span style="font-weight: bold;">Failed to generate code. Please try again.</span>
+            </div>
+          `;
+        }
+      } catch (error) {
+        waitingMessage.style.display = "none";
+        pairResult.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--danger);">
+            <i class="fas fa-unlink"></i>
+            <div>
+              <div style="font-weight: bold;">Service Unavailable</div>
+              <div style="color: var(--gray); font-size: 0.9rem;">Please try again later or check your connection</div>
+            </div>
+          </div>
+        `;
+        console.error('Pairing error:', error);
+      }
+    });
+    
+    // Set up copy button
+    copyBtn.addEventListener("click", function() {
+      const codeText = document.getElementById("code-text");
+      if (codeText) {
+        navigator.clipboard.writeText(codeText.textContent.trim())
+          .then(() => {
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> COPIED!';
+            copyBtn.classList.add('copied');
+            
+            setTimeout(() => {
+              copyBtn.innerHTML = originalText;
+              copyBtn.classList.remove('copied');
+            }, 2000);
+          })
+          .catch(err => {
+            console.error('Failed to copy: ', err);
+          });
+      }
+    });
+    
+    // Set up refresh button
+    refreshBtn.addEventListener('click', () => {
+      updateStatus();
+      updateServerStats();
+      lastRefresh.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+    });
+    
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initial status update
+      updateStatus();
+      updateServerStats();
+      lastRefresh.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+      
+      // Set up periodic updates every 10 seconds
+      setInterval(() => {
+        updateStatus();
+        updateServerStats();
+        lastRefresh.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+      }, 10000);
+      
+      // Update uptime every second
+      setInterval(updateUptime, 1000);
+      
+      // Add animation delays to cards
+      document.querySelectorAll('.status-card').forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.1}s`;
+      });
+      
+      document.querySelectorAll('.server-card').forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.15 + 0.2}s`;
+      });
+      
+      // Show floating ad after delay
+      setTimeout(() => {
+        floatingAd.classList.remove('hidden');
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
