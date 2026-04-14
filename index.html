@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drexen-Ai | Bot Dashboard</title>
+  <link rel="icon" type="jpg" href="https://n.uguu.se/ibFkPLUp.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ========== BASE STYLES ========== */
+    :root {
+      --primary: #8a2be2;
+      --primary-light: #9d4edd;
+      --primary-dark: #6a1b9a;
+      --secondary: #00e5ff;
+      --secondary-light: #18ffff;
+      --accent: #ff4081;
+      --accent-light: #ff79b0;
+      --dark: #121212;
+      --dark-light: #1e1e1e;
+      --darker: #0a0a0a;
+      --card-bg: #1a1a1a;
+      --gray: #888;
+      --light: #ffffff;
+      --danger: #ff3d3d;
+      --warning: #ffc107;
+      --success: #00e676;
+      --info: #2196f3;
+      --purple: #9c27b0;
+      
+      --font-main: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --font-heading: 'Poppins', sans-serif;
+      
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+      --shadow-xl: 0 15px 35px rgba(0, 0, 0, 0.4);
+      --shadow-primary: 0 0 20px rgba(138, 43, 226, 0.4);
+      --shadow-secondary: 0 0 15px rgba(0, 229, 255, 0.4);
+      --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-light));
+      --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+      --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-light));
+      --gradient-bg: linear-gradient(135deg, var(--darker), var(--dark));
+      --gradient-card: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-main);
+      color: var(--light);
+      background: var(--gradient-bg);
+      background-attachment: fixed;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+      line-height: 1.6;
+      padding: 0;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--dark);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-light);
+    }
+    
+    /* ========== WELCOME MODAL ========== */
+    .welcome-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 10, 0.98);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: var(--transition-slow);
+      backdrop-filter: blur(10px);
+    }
+    
+    .welcome-modal.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .welcome-content {
+      background: var(--gradient-card);
+      border-radius: 24px;
+      padding: 50px;
+      max-width: 800px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+      position: relative;
+      overflow: hidden;
+      animation: modalPopIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .welcome-content::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+      z-index: -1;
+    }
+    
+    @keyframes modalPopIn {
+      0% { transform: scale(0.8) translateY(30px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    
+    .welcome-icon {
+      font-size: 5rem;
+      color: var(--primary);
+      margin-bottom: 25px;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .welcome-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+      letter-spacing: 1px;
+    }
+    
+    .welcome-subtitle {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      color: var(--secondary);
+      font-weight: 600;
+    }
+    
+    .welcome-message {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin-bottom: 40px;
+      color: var(--gray);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .welcome-highlight {
+      color: var(--secondary);
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    }
+    
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    
+    .social-btn {
+      display: flex;
+      align-items: center;
+      padding: 18px 30px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: var(--transition);
+      transform: translateY(0);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .social-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    .social-btn:hover::before {
+      left: 100%;
+    }
+    
+    .social-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .whatsapp-btn {
+      background: linear-gradient(45deg, #ff0000, #cc0000);
+      color: white;
+    }
+    
+    .github-btn {
+      background: linear-gradient(45deg, #333, #555);
+      color: white;
+    }
+    
+    .social-btn i {
+      margin-right: 12px;
+      font-size: 1.5rem;
+    }
+    
+    .continue-btn {
+      background: var(--gradient-primary);
+      border: none;
+      padding: 18px 50px;
+      border-radius: 50px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow-primary);
+      margin-top: 20px;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .continue-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    .continue-btn:hover::after {
+      left: 100%;
+    }
+    
+    .continue-btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 30px rgba(138, 43, 226, 0.6);
+    }
+    
+    /* ========== FLOATING AD ========== */
+    .floating-ad {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--gradient-card);
+      border-radius: 18px;
+      padding: 20px;
+      width: 320px;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+      z-index: 1000;
+      animation: slideInRight 0.6s ease-out;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    
+    .floating-ad.hidden {
+      transform: translateX(150%);
+      opacity: 0;
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(150%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .ad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+    }
+    
+    .ad-title {
+      font-size: 1.1rem;
+      color: var(--secondary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .close-ad {
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    
+    .close-ad:hover {
+      color: var(--light);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .ad-content {
+      font-size: 0.95rem;
+      color: var(--light);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    
+    .ad-links {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .ad-link {
+      flex: 1;
+      padding: 10px 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .ad-whatsapp {
+      background: rgba(255, 0, 0, 0.15);
+      color: #ff4d4d;
+      border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+    
+    .ad-whatsapp:hover {
+      background: rgba(255, 0, 0, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    .ad-github {
+      background: rgba(138, 43, 226, 0.15);
+      color: var(--primary-light);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    .ad-github:hover {
+      background: rgba(138, 43, 226, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    /* ========== MAIN CONTAINER ========== */
+    .container { 
+      max-width: 1400px; 
+      margin: 0 auto; 
+      padding: 30px; 
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 0.3s forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* ========== HEADER ========== */
+    .header { 
+      text-align: center; 
+      margin-bottom: 50px; 
+      padding-top: 20px;
+      position: relative;
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 4px;
+      background: var(--gradient-primary);
+      border-radius: 2px;
+    }
+    
+    .header img {
+      width: 150px; 
+      height: 150px; 
+      border-radius: 50%; 
+      border: 6px solid transparent;
+      background: var(--gradient-primary) border-box;
+      box-shadow: var(--shadow-primary); 
+      margin-bottom: 25px;
+      transition: var(--transition);
+      object-fit: cover;
+    }
+    
+    .header img:hover {
+      transform: rotate(10deg) scale(1.08);
+      box-shadow: 0 0 40px rgba(138, 43, 226, 0.7);
+    }
+    
+    .header h1 {
+      font-family: var(--font-heading); 
+      font-size: 3.5rem; 
+      font-weight: 800;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text; 
+      background-clip: text;
+      -webkit-text-fill-color: transparent; 
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+      text-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+    }
+    
+    .header p { 
+      color: var(--secondary); 
+      font-size: 1.3rem; 
+      font-weight: 500;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 15px 25px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      border-left: 4px solid var(--secondary);
+    }
+    
+    /* ========== STATISTICS SECTION ========== */
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 50px;
+    }
+    
+    .stat-card {
+      background: var(--gradient-card);
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: slideIn 0.8s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--gradient-primary);
+    }
+    
+    .stat-card:nth-child(2)::before {
+      background: var(--gradient-secondary);
+    }
+    
+    .stat-card:nth-child(3)::before {
+      background: var(--gradient-accent);
+    }
+    
+    .stat-card:nth-child(4)::before {
+      background: linear-gradient(90deg, var(--success), var(--info));
+    }
+    
+    @keyframes slideIn {
+      from { 
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-xl);
+      border-color: rgba(138, 43, 226, 0.3);
+    }
+    
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .stat-title {
+      font-size: 1rem;
+      color: var(--gray);
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+    
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(138, 43, 226, 0.15);
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+    
+    .stat-card:nth-child(2) .stat-icon {
+      background: rgba(0, 229, 255, 0.15);
+      color: var(--secondary);
+    }
+    
+    .stat-card:nth-child(3) .stat-icon {
+      background: rgba(255, 64, 129, 0.15);
+      color: var(--accent);
+    }
+    
+    .stat-card:nth-child(4) .stat-icon {
+      background: rgba(0, 230, 118, 0.15);
+      color: var(--success);
+    }
+    
+    .stat-value {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .stat-card:nth-child(2) .stat-value {
+      background: var(--gradient-secondary);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    
+    .stat-card:nth-child(3) .stat-value {
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    
+    .stat-card:nth-child(4) .stat-value {
+      background: linear-gradient(90deg, var(--success), var(--info));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    
+    .stat-change {
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+      font-weight: 600;
+      gap: 8px;
+    }
+    
+    .change-up {
+      color: var(--success);
+    }
+    
+    .change-down {
+      color: var(--danger);
+    }
+    
+    .stat-subtext {
+      font-size: 0.85rem;
+      color: var(--gray);
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+    
+    /* ========== DASHBOARD GRID ========== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+    
+    /* ========== STATUS SECTION ========== */
+    .status-section {
+      background: var(--gradient-card); 
+      border-radius: 20px; 
+      padding: 35px; 
+      box-shadow: var(--shadow); 
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: fadeInUp 0.8s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .status-section:hover {
+      transform: translateY(-5px); 
+      box-shadow: var(--shadow-xl); 
+      border-color: rgba(138, 43, 226, 0.3);
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+      color: var(--primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .section-title i {
+      background: rgba(138, 43, 226, 0.15);
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    
+    .search-box {
+      display: flex;
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 15px 20px;
+      border-radius: 12px 0 0 12px;
+      border: 1px solid rgba(138, 43, 226, 0.3);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--light);
+      outline: none;
+      font-family: var(--font-main);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+    }
+    
+    .search-input::placeholder {
+      color: var(--gray);
+    }
+    
+    .search-btn {
+      padding: 0 25px;
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      border-radius: 0 12px 12px 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: var(--transition);
+    }
+    
+    .search-btn:hover {
+      background: var(--primary-dark);
+    }
+    
+    /* ========== BOTS GRID ========== */
+    .bots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+    
+    .bot-card {
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+      background: var(--gradient-card);
+      border-radius: 18px;
+      animation: fadeIn 0.5s ease-out;
+      transition: var(--transition);
+      border-left: 6px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .bot-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(138, 43, 226, 0.1), transparent 70%);
+      z-index: -1;
+    }
+    
+    .bot-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-xl);
+      border-color: rgba(138, 43, 226, 0.3);
+    }
+    
+    .bot-card.online {
+      border-left-color: var(--success);
+    }
+    
+    .bot-card.offline {
+      border-left-color: var(--danger);
+    }
+    
+    .bot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .bot-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .bot-name i {
+      background: rgba(138, 43, 226, 0.15);
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    
+    .bot-status {
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    .status-online { 
+      background: rgba(0, 230, 118, 0.2); 
+      color: var(--success);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      box-shadow: 0 0 15px rgba(0, 230, 118, 0.3);
+      animation: pulse 2s infinite;
+    }
+    
+    .status-offline { 
+      background: rgba(255, 61, 61, 0.2); 
+      color: var(--danger);
+      border: 1px solid rgba(255, 61, 61, 0.3);
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+    }
+    
+    .bot-details {
+      margin: 20px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      transition: var(--transition);
+    }
+    
+    .detail-item:hover {
+      background: rgba(0, 0, 0, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    .detail-label {
+      color: var(--gray);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .detail-value {
+      font-weight: 700;
+      color: var(--light);
+      font-size: 1.2rem;
+    }
+    
+    .detail-item:nth-child(3) .detail-value {
+      color: var(--success);
+    }
+    
+    .detail-item:nth-child(4) .detail-value {
+      color: var(--danger);
+    }
+    
+    .users-progress {
+      margin: 25px 0;
+    }
+    
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .progress-label {
+      color: var(--gray);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    
+    .progress-value {
+      font-weight: 700;
+      color: var(--light);
+    }
+    
+    .progress-container {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+      background: var(--gradient-primary);
+    }
+    
+    .bot-actions {
+      margin-top: 25px;
+      display: flex;
+      gap: 15px;
+    }
+    
+    .connect-btn {
+      flex: 1;
+      background: var(--gradient-primary);
+      border: none;
+      padding: 16px 25px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .connect-btn:hover { 
+      transform: translateY(-5px) scale(1.05); 
+      box-shadow: var(--shadow-primary); 
+    }
+    
+    .connect-btn:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+    }
+    
+    .connect-btn:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .details-btn {
+      background: rgba(138, 43, 226, 0.15);
+      border: 1px solid rgba(138, 43, 226, 0.3);
+      color: var(--primary);
+      padding: 16px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    
+    .details-btn:hover {
+      background: rgba(138, 43, 226, 0.3);
+      transform: translateY(-5px);
+    }
+    
+    /* ========== FOOTER ========== */
+    .footer { 
+      text-align: center; 
+      margin-top: 70px; 
+      color: var(--gray); 
+      font-size: 0.95rem; 
+      padding: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      animation: fadeIn 1.5s ease-out;
+    }
+    
+    .footer p {
+      margin-bottom: 10px;
+    }
+    
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    
+    .footer a:hover {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+    
+    .system-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+      margin: 0 10px;
+    }
+    
+    .system-status.operational {
+      background: rgba(0, 230, 118, 0.15);
+      color: var(--success);
+    }
+    
+    .system-status.partial {
+      background: rgba(255, 193, 7, 0.15);
+      color: var(--warning);
+    }
+    
+    .system-status.offline {
+      background: rgba(255, 61, 61, 0.15);
+      color: var(--danger);
+    }
+    
+    /* ========== TOAST NOTIFICATIONS ========== */
+    .toast-container {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .toast {
+      padding: 18px 25px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: var(--gradient-card);
+      box-shadow: var(--shadow-xl);
+      border-left: 6px solid var(--primary);
+      animation: toastIn 0.3s ease-out;
+      max-width: 400px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .toast.success {
+      border-left-color: var(--success);
+    }
+    
+    .toast.error {
+      border-left-color: var(--danger);
+    }
+    
+    .toast.warning {
+      border-left-color: var(--warning);
+    }
+    
+    .toast.info {
+      border-left-color: var(--info);
+    }
+    
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+    }
+    
+    /* ========== MODAL ========== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .modal {
+      background: var(--gradient-card);
+      border-radius: 24px;
+      width: 90%;
+      max-width: 700px;
+      padding: 40px;
+      box-shadow: var(--shadow-xl);
+      transform: translateY(50px) scale(0.9);
+      transition: var(--transition);
+      position: relative;
+      border: 1px solid rgba(138, 43, 226, 0.3);
+      overflow: hidden;
+    }
+    
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: var(--gradient-primary);
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translateY(0) scale(1);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: rgba(138, 43, 226, 0.15);
+      border: none;
+      color: var(--gray);
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-close:hover {
+      color: var(--light);
+      background: rgba(138, 43, 226, 0.3);
+      transform: rotate(90deg);
+    }
+    
+    .modal-title {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+    
+    .modal-content {
+      margin-bottom: 20px;
+    }
+    
+    /* ========== TABS ========== */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .tab {
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      background: rgba(255, 255, 255, 0.05);
+      font-weight: 600;
+      color: var(--gray);
+    }
+    
+    .tab.active {
+      background: var(--gradient-primary);
+      color: white;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* ========== REFRESH BUTTON ========== */
+    .refresh-btn {
+      background: var(--gradient-primary);
+      border: none;
+      padding: 16px 30px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 25px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+    
+    .refresh-btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: var(--shadow-primary);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--gray);
+      grid-column: 1 / -1;
+    }
+    
+    .loading i {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+    
+    /* ========== RESPONSIVE DESIGN ========== */
+    @media (max-width: 1200px) {
+      .container {
+        padding: 25px;
+      }
+      
+      .bots-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      }
+    }
+    
+    @media (max-width: 992px) {
+      .header h1 {
+        font-size: 3rem;
+      }
+      
+      .welcome-title {
+        font-size: 2.8rem;
+      }
+      
+      .welcome-subtitle {
+        font-size: 1.5rem;
+      }
+      
+      .social-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .social-btn {
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .floating-ad {
+        width: calc(100% - 40px);
+        right: 20px;
+        bottom: 20px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .header p {
+        font-size: 1.1rem;
+      }
+      
+      .stats-section {
+        grid-template-columns: 1fr;
+      }
+      
+      .bots-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .bot-details {
+        grid-template-columns: 1fr;
+      }
+      
+      .bot-actions {
+        flex-direction: column;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .search-box {
+        width: 100%;
+      }
+      
+      .welcome-content {
+        padding: 30px;
+      }
+      
+      .welcome-title {
+        font-size: 2.2rem;
+      }
+      
+      .welcome-subtitle {
+        font-size: 1.2rem;
+      }
+      
+      .welcome-message {
+        font-size: 1rem;
+      }
+      
+      .modal {
+        padding: 30px 25px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .header img {
+        width: 120px;
+        height: 120px;
+      }
+      
+      .stat-value {
+        font-size: 2.2rem;
+      }
+      
+      .bot-card {
+        padding: 25px 20px;
+      }
+      
+      .bot-name {
+        font-size: 1.5rem;
+      }
+      
+      .welcome-content {
+        padding: 25px 20px;
+      }
+      
+      .welcome-title {
+        font-size: 1.8rem;
+      }
+      
+      .tabs {
+        flex-wrap: wrap;
+      }
+      
+      .tab {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+      }
+    }
+    
+    /* ========== BACKGROUND ANIMATION ========== */
+    .bg-animation {
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      z-index: -1;
+      background: radial-gradient(circle at 20% 50%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 80%, rgba(255, 64, 129, 0.1) 0%, transparent 50%);
+      background-color: var(--darker);
+    }
+    
+    /* ========== GLOW EFFECTS ========== */
+    .glow {
+      position: relative;
+    }
+    
+    .glow::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      box-shadow: inset 0 0 20px rgba(138, 43, 226, 0.2);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Welcome Modal -->
+  <div class="welcome-modal" id="welcomeModal">
+    <div class="welcome-content">
+      <div class="welcome-icon">
+        <i class="fas fa-robot"></i>
+      </div>
+      <h1 class="welcome-title">WELCOME TO DULLA TECH!</h1>
+      <h2 class="welcome-subtitle">Advanced WhatsApp Bot Dashboard</h2>
+      <p class="welcome-message">
+        Before you continue to the dashboard, we'd appreciate if you could support us by 
+        <span class="welcome-highlight">follow our whatsapp channel</span> and 
+        <span class="welcome-highlight">following us on GitHub</span>. 
+        Your support helps us continue developing amazing features for you!
+      </p>
+      
+      <div class="social-buttons">
+        <a href="https://whatsapp.com/channel/0029VbBFf4nEgGfS6bViYQ1O" target="_blank" class="social-btn whatsapp-btn">
+          <i class="fab fa-whatsapp"></i> follow our whatsapp
+        </a>
+        <a href="https://github.com/abdallahsalimjuma" target="_blank" class="social-btn github-btn">
+          <i class="fab fa-github"></i> Follow on GitHub
+        </a>
+      </div>
+      
+      <button class="continue-btn" id="continueBtn">
+        Continue to Dashboard <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Floating Ad -->
+  <div class="floating-ad" id="floatingAd">
+    <div class="ad-header">
+      <div class="ad-title">
+        <i class="fas fa-heart"></i> Support dulla Tech
+      </div>
+      <button class="close-ad" id="closeAd">&times;</button>
+    </div>
+    <div class="ad-content">
+      Don't forget to follow our whatsapp channel and follow us on GitHub for updates and new features!
+    </div>
+    <div class="ad-links">
+      <a href="https://whatsapp.com/channel/0029VbBFf4nEgGfS6bViYQ1O" target="_blank" class="ad-link ad-whatsapp">
+        <i class="fab fa-whatsapp"></i> whatsapp
+      </a>
+      <a href="https://github.com/abdallahsalimjuma" target="_blank" class="ad-link ad-github">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div class="bg-animation"></div>
+  <div class="container">
+    <div class="header">
+      <img src="https://n.uguu.se/ibFkPLUp.jpg" alt="Drexen-Ai Logo">
+      <h1>Drexen-Ai</h1>
+      <p>🤖 Advanced WhatsApp Bot Dashboard | Manage your bot deployments</p>
+    </div>
+    
+    <!-- Statistics Section -->
+    <div class="stats-section" id="stats-container">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">TOTAL USERS</div>
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+        </div>
+        <div class="stat-value" id="total-users">0</div>
+        <div class="stat-change" id="user-change">
+          <i class="fas fa-caret-up change-up"></i> <span id="change-value">0</span> today
+        </div>
+        <div class="stat-subtext">Across all servers</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">NEW USERS</div>
+          <div class="stat-icon">
+            <i class="fas fa-user-plus"></i>
+          </div>
+        </div>
+        <div class="stat-value" id="new-users">0</div>
+        <div class="stat-change">
+          <i class="fas fa-caret-up change-up"></i> <span id="joined-value">0</span> today
+        </div>
+        <div class="stat-subtext">Last 24 hours</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">USER LOSS</div>
+          <div class="stat-icon">
+            <i class="fas fa-user-minus"></i>
+          </div>
+        </div>
+        <div class="stat-value" id="lost-users">0</div>
+        <div class="stat-change">
+          <i class="fas fa-caret-down change-down"></i> <span id="left-value">0</span> today
+        </div>
+        <div class="stat-subtext">Last 24 hours</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">ACTIVE BOTS</div>
+          <div class="stat-icon">
+            <i class="fas fa-server"></i>
+          </div>
+        </div>
+        <div class="stat-value" id="active-bots">0/6</div>
+        <div class="stat-change">
+          <span id="uptime-percent">100%</span> uptime
+        </div>
+        <div class="stat-subtext">System status</div>
+      </div>
+    </div>
+    
+    <div class="dashboard-grid">
+      <div class="status-section">
+        <div class="section-header">
+          <h2 class="section-title"><i class="fas fa-server"></i> DEPLOYED BOTS</h2>
+          <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search bots by name or server..." id="search-input">
+            <button class="search-btn" id="search-btn">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="bots-grid" id="bots-container">
+          <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading bot information...</p>
+          </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+          <button class="refresh-btn" id="refresh-btn">
+            <i class="fas fa-sync-alt"></i> Refresh Status
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>© 2025 Drexen-Ai • Made with <i class="fas fa-heart" style="color: var(--accent);"></i> By <a href="https://github.com/abdallahsalimjuma" target="_blank">powered by dulla tech</a></p>
+      <p>
+        System status: <span class="system-status" id="system-status">Checking...</span> | 
+        Last refresh: <span id="last-refresh">--:--:--</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+  
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <h2 class="modal-title" id="modal-title">Bot Details</h2>
+      <div class="modal-content" id="modal-content">
+        <!-- Content will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Welcome Modal and Floating Ad Functionality
+    const welcomeModal = document.getElementById('welcomeModal');
+    const continueBtn = document.getElementById('continueBtn');
+    const floatingAd = document.getElementById('floatingAd');
+    const closeAd = document.getElementById('closeAd');
+    
+    // Show welcome modal on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if user has already seen the welcome message in this session
+      if (!sessionStorage.getItem('welcomeSeen')) {
+        welcomeModal.classList.remove('hidden');
+      } else {
+        // If user has already seen welcome, show main content immediately
+        document.querySelector('.container').style.opacity = '1';
+        document.querySelector('.container').style.animation = 'none';
+        
+        // Show floating ad after a delay
+        setTimeout(() => {
+          floatingAd.classList.remove('hidden');
+        }, 2000);
+      }
+    });
+    
+    // Continue to dashboard
+    continueBtn.addEventListener('click', () => {
+      welcomeModal.classList.add('hidden');
+      sessionStorage.setItem('welcomeSeen', 'true');
+      
+      // Show floating ad after a delay
+      setTimeout(() => {
+        floatingAd.classList.remove('hidden');
+      }, 2000);
+    });
+    
+    // Close floating ad
+    closeAd.addEventListener('click', () => {
+      floatingAd.classList.add('hidden');
+    });
+    
+    // Reopen floating ad after some time if closed
+    document.addEventListener('click', (e) => {
+      // If user clicks on a bot card or refresh button, show ad again after delay
+      if (e.target.closest('.bot-card') || e.target.id === 'refresh-btn') {
+        setTimeout(() => {
+          if (floatingAd.classList.contains('hidden')) {
+            floatingAd.classList.remove('hidden');
+          }
+        }, 30000); // Show after 30 seconds
+      }
+    });
+
+    // Define your servers
+const bots = [
+  {
+        id: 1,
+        name: "Server-1",
+        status: "checking",
+        uptime: "--:--:--",
+        usersOnline: 0,
+        userLimit: 60,
+        server: "Server-1",
+        link: "Server-1",
+        apiUrl: "https://drexen-ai-server-1-89cb1fc65f17.herokuapp.com",
+        lastSessionCount: 0,
+        joined: 0,
+        left: 0
+      },
+      {
+        id: 2,
+        name: "Server-2",
+        status: "checking",
+        uptime: "--:--:--",
+        usersOnline: 0,
+        userLimit: 60,
+        server: "Server-2",
+        link: "Server-2",
+        apiUrl: "https://drexen-ai-server-2-ecd3adf3c94e.herokuapp.com",
+        lastSessionCount: 0,
+        joined: 0,
+        left: 0
+      },
+      {
+        id: 3,
+        name: "Server-3",
+        status: "checking",
+        uptime: "--:--:--",
+        usersOnline: 0,
+        userLimit: 60,
+        server: "Server-3",
+        link: "Server-3",
+        apiUrl: "https://drexen-ai-server-3-4e4647c70d47.herokuapp.com",
+        lastSessionCount: 0,
+        joined: 0,
+        left: 0
+      },
+      {
+        id: 4,
+        name: "Server-4",
+        status: "checking",
+        uptime: "--:--:--",
+        usersOnline: 0,
+        userLimit: 60,
+        server: "Server-4",
+        link: "Server-4",
+        apiUrl: "https://drexen-ai-server-4-a5329352478e.herokuapp.com",
+        lastSessionCount: 0,
+        joined: 0,
+        left: 0
+      },
+      {
+        id: 5,
+        name: "Server-5",
+        status: "checking",
+        uptime: "--:--:--",
+        usersOnline: 0,
+        userLimit: 60,
+        server: "Server-5",
+        link: "Server-5",
+        apiUrl: "https://drexen-ai-server-5-f1ca9a1f1b68.herokuapp.com",
+        lastSessionCount: 0,
+        joined: 0,
+        left: 0
+      },
+      {
+        id: 6,
+        name: "Server-6",
+        status: "checking",
+        uptime: "--:--:--",
+        usersOnline: 0,
+        userLimit: 60,
+        server: "Server-6",
+        link: "Server-6",
+        apiUrl: "https://drexen-ai-server-6-93a0c6a5d00c.herokuapp.com",
+        lastSessionCount: 0,
+        joined: 0,
+        left: 0
+      }
+];
+
+    // Statistics data
+    let stats = {
+      totalUsers: 0,
+      newUsers: 0,
+      lostUsers: 0,
+      activeBots: 0,
+      totalBots: bots.length,
+      userChange: 0
+    };
+
+    // DOM elements
+    const botsContainer = document.getElementById("bots-container");
+    const refreshBtn = document.getElementById("refresh-btn");
+    const lastRefresh = document.getElementById("last-refresh");
+    const systemStatus = document.getElementById("system-status");
+    const searchInput = document.getElementById("search-input");
+    const searchBtn = document.getElementById("search-btn");
+    const toastContainer = document.getElementById("toast-container");
+    const modalOverlay = document.getElementById("modal-overlay");
+    const modalClose = document.getElementById("modal-close");
+    const modalTitle = document.getElementById("modal-title");
+    const modalContent = document.getElementById("modal-content");
+
+    // Statistics DOM elements
+    const totalUsersEl = document.getElementById("total-users");
+    const newUsersEl = document.getElementById("new-users");
+    const lostUsersEl = document.getElementById("lost-users");
+    const activeBotsEl = document.getElementById("active-bots");
+    const userChangeEl = document.getElementById("user-change");
+    const changeValueEl = document.getElementById("change-value");
+    const joinedValueEl = document.getElementById("joined-value");
+    const leftValueEl = document.getElementById("left-value");
+    const uptimePercentEl = document.getElementById("uptime-percent");
+
+    // Function to show toast notification
+    function showToast(message, type = "default") {
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <i class="fas fa-${type === "success" ? "check-circle" : type === "error" ? "exclamation-circle" : type === "warning" ? "exclamation-triangle" : "info-circle"}"></i>
+        <span>${message}</span>
+      `;
+      
+      toastContainer.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = "toastOut 0.3s ease-out";
+        setTimeout(() => {
+          toastContainer.removeChild(toast);
+        }, 300);
+      }, 4000);
+    }
+
+    // Function to update statistics
+    function updateStatistics() {
+      let totalUsers = 0;
+      let activeBots = 0;
+      let newUsers = 0;
+      let lostUsers = 0;
+      
+      bots.forEach(bot => {
+        totalUsers += bot.usersOnline;
+        if (bot.status === "active") activeBots++;
+        newUsers += bot.joined;
+        lostUsers += bot.left;
+      });
+      
+      const userChange = newUsers - lostUsers;
+      
+      // Update stats object
+      stats.totalUsers = totalUsers;
+      stats.newUsers = newUsers;
+      stats.lostUsers = lostUsers;
+      stats.activeBots = activeBots;
+      stats.userChange = userChange;
+      
+      // Update DOM
+      totalUsersEl.textContent = totalUsers.toLocaleString();
+      newUsersEl.textContent = `+${newUsers}`;
+      lostUsersEl.textContent = `-${lostUsers}`;
+      activeBotsEl.textContent = `${activeBots}/${bots.length}`;
+      
+      // Update change indicator
+      changeValueEl.textContent = Math.abs(userChange);
+      joinedValueEl.textContent = newUsers;
+      leftValueEl.textContent = lostUsers;
+      
+      if (userChange > 0) {
+        userChangeEl.innerHTML = `<i class="fas fa-caret-up change-up"></i> ${userChange} today`;
+      } else if (userChange < 0) {
+        userChangeEl.innerHTML = `<i class="fas fa-caret-down change-down"></i> ${Math.abs(userChange)} today`;
+      } else {
+        userChangeEl.innerHTML = `<i class="fas fa-minus"></i> 0 today`;
+      }
+      
+      // Calculate uptime percentage
+      const uptimePercent = Math.round((activeBots / bots.length) * 100);
+      uptimePercentEl.textContent = `${uptimePercent}%`;
+    }
+
+    // Function to update bot status from API
+    async function updateBotStatus(bot) {
+      try {
+        const response = await fetch(`${bot.apiUrl}/code/ping`);
+        const data = await response.json();
+        
+        // Calculate joined and left users
+        const currentSessionCount = data.activesession || 0;
+        const joined = Math.max(0, currentSessionCount - bot.lastSessionCount);
+        const left = Math.max(0, bot.lastSessionCount - currentSessionCount);
+        
+        return {
+          ...bot,
+          status: data.status || 'unknown',
+          usersOnline: currentSessionCount,
+          uptime: data.uptime || '--:--:--',
+          lastSessionCount: currentSessionCount,
+          joined: bot.status === 'checking' ? 0 : joined,
+          left: bot.status === 'checking' ? 0 : left
+        };
+      } catch (error) {
+        console.error(`Error fetching status for ${bot.name}:`, error);
+        return {
+          ...bot,
+          status: 'offline',
+          usersOnline: 0,
+          uptime: '--:--:--',
+          joined: 0,
+          left: 0
+        };
+      }
+    }
+
+    // Function to generate bot cards
+    function generateBotCards(botsData) {
+      botsContainer.innerHTML = '';
+      
+      if (!botsData || botsData.length === 0) {
+        botsContainer.innerHTML = `
+          <div class="loading">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>No bots found matching your search.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      botsData.forEach(bot => {
+        const usagePercent = Math.round((bot.usersOnline / bot.userLimit) * 100);
+        const isFull = bot.usersOnline >= bot.userLimit;
+        const isOnline = bot.status === 'active';
+        
+        const botCard = document.createElement('div');
+        botCard.className = `bot-card ${isOnline ? 'online' : 'offline'}`;
+        botCard.innerHTML = `
+          <div class="bot-header">
+            <div class="bot-name">
+              <i class="fas fa-robot"></i> ${bot.name}
+            </div>
+            <div class="bot-status ${isOnline ? 'status-online' : 'status-offline'}">
+              ${isOnline ? 'ONLINE' : 'OFFLINE'}
+            </div>
+          </div>
+          
+          <div class="bot-details">
+            <div class="detail-item">
+              <div class="detail-label"><i class="fas fa-server"></i> Server:</div>
+              <div class="detail-value">${bot.server}</div>
+            </div>
+            
+            <div class="detail-item">
+              <div class="detail-label"><i class="fas fa-clock"></i> Uptime:</div>
+              <div class="detail-value">${bot.uptime}</div>
+            </div>
+            
+            <div class="detail-item">
+              <div class="detail-label"><i class="fas fa-users"></i> Users:</div>
+              <div class="detail-value">${bot.usersOnline}/${bot.userLimit}</div>
+            </div>
+            
+            <div class="detail-item">
+              <div class="detail-label"><i class="fas fa-user-plus"></i> Joined:</div>
+              <div class="detail-value">+${bot.joined}</div>
+            </div>
+          </div>
+          
+          <div class="users-progress">
+            <div class="progress-info">
+              <span class="progress-label">Server Capacity</span>
+              <span class="progress-value">${usagePercent}%</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" style="width: ${usagePercent}%"></div>
+            </div>
+          </div>
+          
+          <div class="bot-actions">
+            <a href="${isOnline && !isFull ? bot.link : '#'}" class="connect-btn" ${!isOnline || isFull ? 'disabled style="opacity: 0.7; cursor: not-allowed;"' : ''}>
+              ${!isOnline ? '<i class="fas fa-power-off"></i> Offline' : isFull ? '<i class="fas fa-ban"></i> Server Full' : '<i class="fas fa-plug"></i> Connect to Bot'}
+            </a>
+            <button class="details-btn" data-bot-id="${bot.id}">
+              <i class="fas fa-chart-bar"></i>
+            </button>
+          </div>
+        `;
+        
+        botsContainer.appendChild(botCard);
+      });
+      
+      // Add event listeners to detail buttons
+      document.querySelectorAll('.details-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const botId = btn.getAttribute('data-bot-id');
+          showBotDetails(parseInt(botId));
+        });
+      });
+    }
+
+    // Function to show bot details in modal
+    function showBotDetails(botId) {
+      const bot = bots.find(b => b.id === botId);
+      if (!bot) return;
+      
+      const usagePercent = Math.round((bot.usersOnline / bot.userLimit) * 100);
+      const isOnline = bot.status === 'active';
+      
+      modalTitle.textContent = `${bot.name} Details`;
+      modalContent.innerHTML = `
+        <div class="tabs">
+          <div class="tab active" data-tab="overview">Overview</div>
+          <div class="tab" data-tab="stats">Statistics</div>
+          <div class="tab" data-tab="actions">Actions</div>
+        </div>
+        
+        <div class="tab-content active" id="overview-tab">
+          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+            <div class="bot-status ${isOnline ? 'status-online' : 'status-offline'}" style="margin: 0;">
+              ${isOnline ? 'ONLINE' : 'OFFLINE'}
+            </div>
+            <div>
+              <div style="font-size: 0.9rem; color: var(--gray);">Status</div>
+              <div style="font-size: 1.2rem; font-weight: bold; color: ${isOnline ? 'var(--success)' : 'var(--danger)'};">${isOnline ? 'Operational' : 'Offline'}</div>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border-left: 4px solid var(--primary);">
+              <div style="font-size: 0.9rem; color: var(--gray);">Current Users</div>
+              <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">${bot.usersOnline}</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border-left: 4px solid var(--secondary);">
+              <div style="font-size: 0.9rem; color: var(--gray);">Capacity</div>
+              <div style="font-size: 2rem; font-weight: bold; color: var(--secondary);">${usagePercent}%</div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 25px;">
+            <h3 style="margin-bottom: 15px; color: var(--primary); font-size: 1.2rem;">Today's Activity</h3>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+              <span><i class="fas fa-user-plus" style="color: var(--success); margin-right: 8px;"></i> Joined today:</span>
+              <span style="color: var(--success); font-weight: 700;">+${bot.joined}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+              <span><i class="fas fa-user-minus" style="color: var(--danger); margin-right: 8px;"></i> Left today:</span>
+              <span style="color: var(--danger); font-weight: 700;">-${bot.left}</span>
+            </div>
+          </div>
+          
+          <div>
+            <h3 style="margin-bottom: 15px; color: var(--primary); font-size: 1.2rem;">Server Information</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div style="color: var(--gray);">Status:</div>
+              <div>${isOnline ? 'Operational' : 'Offline'}</div>
+              
+              <div style="color: var(--gray);">Uptime:</div>
+              <div>${bot.uptime}</div>
+              
+              <div style="color: var(--gray);">Server:</div>
+              <div>${bot.server}</div>
+              
+              <div style="color: var(--gray);">API Endpoint:</div>
+              <div style="word-break: break-all; font-size: 0.85rem;">${bot.apiUrl}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="stats-tab">
+          <h3 style="margin-bottom: 20px; color: var(--primary);">Usage Statistics</h3>
+          
+          <div style="margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>Max Capacity:</span>
+              <span>${bot.userLimit} users</span>
+            </div>
+            <div style="height: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 5px;">
+              <div style="height: 100%; width: ${usagePercent}%; background: var(--gradient-primary);"></div>
+            </div>
+            <div style="text-align: center; font-size: 0.9rem; color: var(--gray);">
+              ${bot.usersOnline} of ${bot.userLimit} users (${usagePercent}%)
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; text-align: center; border-top: 4px solid var(--success);">
+              <div style="font-size: 2.2rem; color: var(--success); font-weight: 800;">+${bot.joined}</div>
+              <div style="font-size: 0.9rem; color: var(--gray); margin-top: 5px;">Joined Today</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; text-align: center; border-top: 4px solid var(--danger);">
+              <div style="font-size: 2.2rem; color: var(--danger); font-weight: 800;">-${bot.left}</div>
+              <div style="font-size: 0.9rem; color: var(--gray); margin-top: 5px;">Left Today</div>
+            </div>
+          </div>
+          
+          <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+            <h4 style="margin-bottom: 15px; color: var(--secondary);">Performance Metrics</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div>
+                <div style="font-size: 0.9rem; color: var(--gray);">Response Time</div>
+                <div style="font-size: 1.2rem; font-weight: bold; color: var(--light);">~200ms</div>
+              </div>
+              <div>
+                <div style="font-size: 0.9rem; color: var(--gray);">Error Rate</div>
+                <div style="font-size: 1.2rem; font-weight: bold; color: ${isOnline ? 'var(--success)' : 'var(--danger)'};">${isOnline ? '0.1%' : '100%'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="actions-tab">
+          <h3 style="margin-bottom: 20px; color: var(--primary);">Bot Actions</h3>
+          <div style="display: grid; gap: 15px;">
+            <button class="connect-btn" style="margin: 0; background: var(--gradient-secondary);">
+              <i class="fas fa-sync"></i> Restart Bot
+            </button>
+            <button class="connect-btn" style="margin: 0; background: linear-gradient(45deg, var(--info), var(--purple));">
+              <i class="fas fa-cog"></i> Bot Settings
+            </button>
+            <button class="connect-btn" style="margin: 0; background: linear-gradient(45deg, var(--warning), var(--danger));">
+              <i class="fas fa-trash"></i> Remove Bot
+            </button>
+            <button class="connect-btn" style="margin: 0; background: linear-gradient(45deg, #333, #555);">
+              <i class="fas fa-code"></i> View Logs
+            </button>
+          </div>
+          
+          <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+            <h4 style="margin-bottom: 15px; color: var(--secondary);">Quick Actions</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <button style="padding: 10px; background: rgba(138, 43, 226, 0.2); border: 1px solid rgba(138, 43, 226, 0.3); color: var(--primary); border-radius: 8px; cursor: pointer;">Force Restart</button>
+              <button style="padding: 10px; background: rgba(0, 229, 255, 0.2); border: 1px solid rgba(0, 229, 255, 0.3); color: var(--secondary); border-radius: 8px; cursor: pointer;">Clear Cache</button>
+              <button style="padding: 10px; background: rgba(255, 64, 129, 0.2); border: 1px solid rgba(255, 64, 129, 0.3); color: var(--accent); border-radius: 8px; cursor: pointer;">Reset Stats</button>
+              <button style="padding: 10px; background: rgba(0, 230, 118, 0.2); border: 1px solid rgba(0, 230, 118, 0.3); color: var(--success); border-radius: 8px; cursor: pointer;">Optimize</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Add tab functionality
+      modalContent.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs and contents
+          modalContent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          modalContent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          // Add active class to clicked tab and corresponding content
+          tab.classList.add('active');
+          const tabName = tab.getAttribute('data-tab');
+          document.getElementById(`${tabName}-tab`).classList.add('active');
+        });
+      });
+      
+      // Show modal
+      modalOverlay.classList.add('active');
+    }
+
+    // Update all bots status
+    async function updateAllBotsStatus() {
+      const updatedBots = [];
+      let onlineCount = 0;
+      
+      for (const bot of bots) {
+        const updatedBot = await updateBotStatus(bot);
+        updatedBots.push(updatedBot);
+        
+        if (updatedBot.status === 'active') {
+          onlineCount++;
+        }
+        
+        // Add a small delay between requests to avoid overwhelming servers
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+      
+      // Update the bots array
+      bots.length = 0;
+      bots.push(...updatedBots);
+      
+      generateBotCards(updatedBots);
+      updateStatistics();
+      
+      // Update system status
+      systemStatus.className = 'system-status';
+      if (onlineCount === bots.length) {
+        systemStatus.textContent = 'Operational';
+        systemStatus.classList.add('operational');
+      } else if (onlineCount > 0) {
+        systemStatus.textContent = 'Partial Outage';
+        systemStatus.classList.add('partial');
+      } else {
+        systemStatus.textContent = 'Offline';
+        systemStatus.classList.add('offline');
+      }
+      
+      // Update last refresh time
+      const now = new Date();
+      lastRefresh.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+      
+      // Show notification if there are changes
+      const totalJoined = bots.reduce((sum, bot) => sum + bot.joined, 0);
+      const totalLeft = bots.reduce((sum, bot) => sum + bot.left, 0);
+      
+      if (totalJoined > 0 || totalLeft > 0) {
+        showToast(`${totalJoined} new users, ${totalLeft} users left`, "info");
+      }
+    }
+
+    // Search functionality
+    function filterBots(searchTerm) {
+      if (!searchTerm) {
+        generateBotCards(bots);
+        return;
+      }
+      
+      const filteredBots = bots.filter(bot => 
+        bot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bot.server.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      
+      generateBotCards(filteredBots);
+    }
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Only update bot status if welcome modal is not shown or has been dismissed
+      if (sessionStorage.getItem('welcomeSeen')) {
+        updateAllBotsStatus();
+      }
+      
+      // Set up refresh button
+      refreshBtn.addEventListener('click', () => {
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+        updateAllBotsStatus().then(() => {
+          refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Status';
+          showToast('Status updated successfully', 'success');
+        });
+      });
+      
+      // Set up search functionality
+      searchBtn.addEventListener('click', () => {
+        filterBots(searchInput.value);
+      });
+      
+      searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          filterBots(searchInput.value);
+        }
+      });
+      
+      // Set up modal close
+      modalClose.addEventListener('click', () => {
+        modalOverlay.classList.remove('active');
+      });
+      
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          modalOverlay.classList.remove('active');
+        }
+      });
+      
+      // Set up periodic updates every 30 seconds
+      setInterval(updateAllBotsStatus, 30000);
+    });
+  </script>
+</body>
+</html>
