@@ -1,0 +1,13 @@
+{
+  "name": "Dullah",
+  "description": "A lightweight WhatsApp BOT by Hans.",
+  "repository": "https://github.com/abdallahsalimjuma/DULLAH-XMD",
+
+  "env": {
+    "NODE_ENV": "production"
+  },
+
+  "buildpacks": [
+    { "url": "heroku/nodejs" }
+  ]
+}
